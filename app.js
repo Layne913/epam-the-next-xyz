@@ -17,21 +17,27 @@ var api = require('./routes/api');
 app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
 
-// express middleware that parser the key-value pairs sent in the request body in the format of our choosing (e.g. json) 
+// express middleware that parser the key-value pairs sent in the request body in the format of our choosing (e.g. json)
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(function (req, res, next) {
+   res.locals.scripts = [];
+   next();
+});
 
 // setup our public directory (which will serve any file stored in the 'public' directory)
 app.use(express.static('public'));
 
 // respond to the get request with the home page
 app.get('/', function (req, res) {
+    res.locals.scripts.push('/js/home.js');
     res.render('home');
 });
 
 // respond to the get request with the about page
 app.get('/about', function(req, res) {
-  res.render('about');
+      res.locals.scripts.push('/js/about.js');
+      res.render('about');
 });
 
 // respond to the get request with the register page
@@ -42,7 +48,7 @@ app.get('/register', function(req, res) {
 // handle the posted registration data
 app.post('/register', function(req, res) {
 
-  // get the data out of the request (req) object 
+  // get the data out of the request (req) object
   // store the user in memory here
 
   res.redirect('/dashboard');
