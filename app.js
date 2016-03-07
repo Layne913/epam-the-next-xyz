@@ -1,6 +1,23 @@
 // include and setup express
 var express = require('express');
 var bodyParser = require('body-parser');
+var mongoose = require('mongoose');
+
+//connect  to mongoDB
+mongoose.connect('mongodb://localhost/testMongo');
+var Schema = mongoose.Schema;
+
+var ArticleSchema = new Schema({
+  title: String,
+  url: String,
+  image: String,
+  username: String,
+  date: Date
+});
+
+mongoose.model('Article', ArticleSchema);
+var Article = mongoose.model('Article');
+
 
 // include express handlebars (templating engine)
 var exphbs  = require('express-handlebars');
@@ -11,6 +28,8 @@ var hbs = exphbs.create({defaultLayout: 'main'});
 // crethe the express app
 var app = express();
 
+
+//api should define after model
 var api = require('./routes/api');
 
 // setup handlebars
@@ -38,7 +57,13 @@ app.get('/', function (req, res) {
 app.get('/about', function(req, res) {
       res.locals.scripts.push('/js/about.js');
       res.render('about');
+      //res.render('dashboard');
 });
+
+
+// app.get('/article/:id', function() {
+//   console.log("getting the request with id " + id);
+// })
 
 // respond to the get request with the register page
 app.get('/register', function(req, res) {

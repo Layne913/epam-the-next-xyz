@@ -1,5 +1,4 @@
 $(function(){
-  console.log("Hello");
   $.ajax({
     method: "GET",
     url: "/api/articles",
@@ -12,17 +11,16 @@ $(function(){
   })
 });
 
-// $('.place_img').mouseover(function() {
-//   $('.article_img p').css("visibility","visible");
-// });
 
 function setPage(data) {
+
   var blocks = $(".col-md-4");
   var index = 0;
   $.makeArray(blocks).forEach(function(block){
     var image = $.makeArray($(block).find( "img" ))[0];
     var image_name =  $.makeArray($(block).find( "p" ))[0];
     var image_summary = $.makeArray($(block).find( ".image_summary" ))[0];
+    var  image_id = data[index]._id;
     image.src = data[index].image;
     image_summary.innerHTML = data[index].summary;
     image_name.innerHTML = data[index].title;
@@ -35,9 +33,24 @@ function setPage(data) {
       $(image_name).css("visibility","hidden");
     })
 
+    $(image).click(function() {
+      sendIdRequest(image_id);
+    })
     index++;
   });
 }
 
+function sendIdRequest(id) {
+    $.ajax({
+    method: "GET",
+    url: "/api/articles/"+ id,
+    success: function(data) {
+      console.log(JSON.stringigy(data) + " got Responses");
+    },
+    error: function(error) {
+      alert("Error");
+    }
+  })
+}
 
 
