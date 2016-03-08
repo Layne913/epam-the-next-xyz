@@ -20,7 +20,9 @@ function setPage(data) {
     var image = $.makeArray($(block).find( "img" ))[0];
     var image_name =  $.makeArray($(block).find( "p" ))[0];
     var image_summary = $.makeArray($(block).find( ".image_summary" ))[0];
-    var  image_id = data[index]._id;
+    var image_id = data[index]._id;
+    var image_a = $.makeArray($(block).find( "a" ))[0];
+    image_a.href = "api/articles/" + image_id;
     image.src = data[index].image;
     image_summary.innerHTML = data[index].summary;
     image_name.innerHTML = data[index].title;
@@ -31,26 +33,27 @@ function setPage(data) {
 
     $(image).mouseout(function() {
       $(image_name).css("visibility","hidden");
-    })
+    });
 
-    $(image).click(function() {
-      sendIdRequest(image_id);
-    })
+    // $(image).click(function() {
+    //   sendIdRequest(image_id);
+    // });
+
     index++;
   });
 }
 
-function sendIdRequest(id) {
-    $.ajax({
-    method: "GET",
-    url: "/api/articles/"+ id,
-    success: function(data) {
-      console.log(JSON.stringigy(data) + " got Responses");
-    },
-    error: function(error) {
-      alert("Error");
-    }
-  })
-}
+// function sendIdRequest(id) {
+//     $.ajax({
+//     method: "GET",
+//     url: "/api/articles/"+ id,
+//     success: function(data) {
+//      // console.log(JSON.stringify(data) + " got Responses");
+//     },
+//     error: function(error) {
+//       alert("Error");
+//     }
+//   })
+// }
 
 

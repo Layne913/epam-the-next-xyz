@@ -9,14 +9,18 @@ var Schema = mongoose.Schema;
 
 var ArticleSchema = new Schema({
   title: String,
-  url: String,
   image: String,
-  username: String,
-  date: Date
+  summary: String
 });
 
+var SiteSchema = new Schema({
+  name: String
+})
+
+mongoose.model('Site', SiteSchema);
 mongoose.model('Article', ArticleSchema);
 var Article = mongoose.model('Article');
+var Site = mongoose.model('Site');
 
 
 // include express handlebars (templating engine)
@@ -57,14 +61,30 @@ app.get('/', function (req, res) {
 app.get('/about', function(req, res) {
       res.locals.scripts.push('/js/about.js');
       res.render('about');
-      //res.render('dashboard');
 });
 
-
-// app.get('/article/:id', function() {
-//   console.log("getting the request with id " + id);
+// app.get('/dashboard', function (req, res) {
+//     console.log('set dashboard.js');
+//     res.locals.scripts.push('/js/dashboard.js')
+//     res.render('dashboard');
 // })
 
+
+/*app.get('api/article/:id', function() {
+  console.log("getting the request with id " + id);
+  // Article.findById(req.params.id, function(err, data) {
+  //   if(!err) {
+  //     res.render('place');
+  //     res.locals.scripts.push('/js/place.js');
+
+  //     //res.render('place');
+  //   } else {
+  //     res.send(404, 'File not Found');
+  //   }
+  // });
+})
+
+*/
 // respond to the get request with the register page
 app.get('/register', function(req, res) {
   res.render('register');
@@ -81,6 +101,7 @@ app.post('/register', function(req, res) {
 
 // respond to the get request with dashboard page (and pass in some data into the template / note this will be rendered server-side)
 app.get('/dashboard', function (req, res) {
+    res.locals.scripts.push('/js/dashboard.js')
     res.render('dashboard', {
     	stuff: [{
 		    greeting: "Hello",
@@ -89,6 +110,10 @@ app.get('/dashboard', function (req, res) {
     });
 });
 
+
+app.post('/dashboard', function (req, res, next) {
+
+})
 // the api (note that typically you would likely organize things a little differently to this)
 app.use('/api', api);
 
