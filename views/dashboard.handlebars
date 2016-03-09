@@ -2,13 +2,11 @@
 <div id="stuff">
 	<h4>Welcome <em>ADD NAME HERE</em></h4>
 
-	{{#each stuff}}
-	<p>{{ greeting }} {{ subject }}</p>
-	{{/each}}
+	<p>{{ greeting }} {{ name }}</p>
 
 	<hr>
 
-	<button class="btn btn-inverse btn-lg">Add New Article</button>
+
 </div>
 
 <div class="add_article">
@@ -25,7 +23,7 @@
       <label >Summary</label>
       <input class="form-control" name="summary">
     </div>
-    <button type="submit" class="btn btn-default">Submit</button>
+    <button type="submit" class="btn btn-inverse btn-lg">Add New Article</button>
   </form>
 </div>
 

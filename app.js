@@ -2,9 +2,13 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
+// var passport = require('passport');
+// var LocalStrategy = require('passport-local').Strategy;
 
 //connect  to mongoDB
-mongoose.connect('mongodb://localhost/testMongo');
+mongoose.connect('mongodb://127.0.0.1/testMongo');
+
+
 var Schema = mongoose.Schema;
 
 var ArticleSchema = new Schema({
@@ -15,12 +19,20 @@ var ArticleSchema = new Schema({
 
 var SiteSchema = new Schema({
   name: String
-})
+});
+
+var UserSchema = new Schema({
+  name: String,
+  email: String,
+  password: String
+});
 
 mongoose.model('Site', SiteSchema);
 mongoose.model('Article', ArticleSchema);
+mongoose.model('User', UserSchema);
 var Article = mongoose.model('Article');
 var Site = mongoose.model('Site');
+var User = mongoose.model('User');
 
 
 // include express handlebars (templating engine)
@@ -63,57 +75,61 @@ app.get('/about', function(req, res) {
       res.render('about');
 });
 
-// app.get('/dashboard', function (req, res) {
-//     console.log('set dashboard.js');
-//     res.locals.scripts.push('/js/dashboard.js')
-//     res.render('dashboard');
-// })
+app.post('/users', function(req, res, next) {
+  console.log(req.body);
+  var user = new User(req.body);
+  user.save(function(err, article) {
+     if (err) {
+      return console.error(err);
+     } else {
+        console.log("successfully added in the database");
+        //res.render('dashboard');
+         res.render('dashboard', {
+        greeting: "Hello",
+        name: "Jonesss"
+    });
+       // res.redirect('dashboard');
+     }
+  });
+});
 
+app.post('/register', function(req, res, next) {
+  var user = new User(req.body);
+  user.save(function(err, article) {
+     if (err) {
+      return console.error(err);
+     } else {
+        res.render('dashboard', {
+        greeting: "Hello",
+        name: user.name
+    });
+     }
+  });
+});
 
-/*app.get('api/article/:id', function() {
-  console.log("getting the request with id " + id);
-  // Article.findById(req.params.id, function(err, data) {
-  //   if(!err) {
-  //     res.render('place');
-  //     res.locals.scripts.push('/js/place.js');
-
-  //     //res.render('place');
-  //   } else {
-  //     res.send(404, 'File not Found');
-  //   }
-  // });
-})
-
-*/
 // respond to the get request with the register page
 app.get('/register', function(req, res) {
   res.render('register');
 });
 
-// handle the posted registration data
-app.post('/register', function(req, res) {
-
-  // get the data out of the request (req) object
-  // store the user in memory here
-
-  res.redirect('/dashboard');
+app.get('/login', function(req, res) {
+  res.render('login');
 });
 
 // respond to the get request with dashboard page (and pass in some data into the template / note this will be rendered server-side)
 app.get('/dashboard', function (req, res) {
-    res.locals.scripts.push('/js/dashboard.js')
+    res.locals.scripts.push('/js/dashboard.js');
     res.render('dashboard', {
-    	stuff: [{
 		    greeting: "Hello",
-		    subject: "World!"
-		}]
+		    name: "Jone"
     });
 });
 
 
-app.post('/dashboard', function (req, res, next) {
+app.post('/login', passport.authenticate('local'), function(req, res) {
+    res.redirect('/');
+});
 
-})
 // the api (note that typically you would likely organize things a little differently to this)
 app.use('/api', api);
 
@@ -121,6 +137,6 @@ app.use('/api', api);
 var server = require('http').createServer(app);
 
 // start the server
-server.listen(1337, '127.0.0.1', function () {
-  console.log('The Next XYZ is looking good! Open http://localhost:%d to begin.', 1337);
+server.listen(1338, '127.0.0.1', function () {
+  console.log('The Next XYZ is looking good! Open http://localhost:%d to begin.', 1338);
 });
