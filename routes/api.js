@@ -57,12 +57,4 @@ router.get('/articles/:id', function(req, res, next) {
 	});
 });
 
-// router.get('/sites', function(req, res, next) {
-// 	Site.find({}, null, {sort:{data: -1}}, function(err, data) {
-// 		console.log(JSON.stringify(data));
-// 		var template = Handlebars.compile($('#list_sites').html())
-// 		var temp = template(data);
-// 	});
-// })
-
 module.exports = router;
