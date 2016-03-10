@@ -5,6 +5,8 @@ var mongoose = require('mongoose');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var session = require('express-session');
+var crypto = require('crypto');
+var userStore = {};
 
 
 //connect  to mongoDB
@@ -82,12 +84,16 @@ passport.use(new LocalStrategy({
     passwordField: 'password'
   },
   function(username, password, done) {
+    var hash = crypto
+      .createHash("md5")
+      .update(password)
+      .digest('hex');
     User.findOne({ email: username }, function(err, user) {
       if (err) { return done(err); }
       if (!user) {
         return done(null, false, { message: 'Incorrect username.' });
       }
-      if (!user.validPassword(password)) {
+      if (!user.validPassword(hash)) {
         return done(null, false, { message: 'Incorrect password.' });
       }
       return done(null, user);
@@ -120,20 +126,22 @@ app.get('/', function (req, res) {
 // respond to the get request with the about page
 app.get('/about', function(req, res ) {
   Site.find({}, null, {sort:{data: -1}}, function(err, data) {
-    console.log(JSON.stringify(data));
     res.render('about', data);
  });
 });
 
 app.post('/register', function(req, res, next) {
+  var hash = crypto
+      .createHash("md5")
+      .update(req.body.password)
+      .digest('hex');  req.body.password = hash;
   var user = new User(req.body);
   user.save(function(err, article) {
      if (err) {
       return console.error(err);
      } else {
-        res.render('dashboard', {
-        name: user.name
-    });
+        //res.render('dashboard');
+        res.redirect('login');
      }
   });
 });
@@ -148,15 +156,16 @@ app.get('/login', function(req, res) {
 });
 
 app.post('/login', passport.authenticate('local', { successRedirect: '/dashboard',
-    failureRedirect: '/loginin' }), function(req, res) {
+    failureRedirect: '/login' }), function(req, res) {
       console.log('in signin post');
 });
 
 // respond to the get request with dashboard page (and pass in some data into the template / note this will be rendered server-side)
 app.get('/dashboard', function (req, res) {
+
     res.locals.scripts.push('/js/dashboard.js');
     res.render('dashboard', {
-		    name: user.name
+		    name: req.user.name
     });
 });
 
