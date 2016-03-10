@@ -68,6 +68,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(function (req, res, next) {
    res.locals.scripts = [];
    next();
+   if (req.user) {
+      res.locals.user = req.user;
+    }
 });
 
 app.use(session({secret:'secret'}));
@@ -129,7 +132,6 @@ app.post('/register', function(req, res, next) {
       return console.error(err);
      } else {
         res.render('dashboard', {
-        greeting: "Hello",
         name: user.name
     });
      }
@@ -154,8 +156,7 @@ app.post('/login', passport.authenticate('local', { successRedirect: '/dashboard
 app.get('/dashboard', function (req, res) {
     res.locals.scripts.push('/js/dashboard.js');
     res.render('dashboard', {
-		    greeting: "Hello",
-		    name: "Jone"
+		    name: user.name
     });
 });
 
